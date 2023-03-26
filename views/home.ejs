@@ -1,0 +1,82 @@
+<link rel='stylesheet' type='text/scss' media='screen' href='/css/home.css'>
+
+<div id="home-container">
+
+  <section id="feed-post">
+    <h4>Posts</h4>
+    <% if(locals.user) { %>
+      <form action="/posts/createPost" id="new-post-form" method="POST">
+        <textarea name="content" cols="50" rows="5" placeholder="Type Here.." required></textarea>
+        <input type="submit" value="POST" />
+      </form>
+      <% } %>
+
+        <div id="post-list-container">
+          <ul style="list-style-type: none;">
+            <% for(let post of posts) { %>
+
+              <li>
+                <p>
+                  <%=post.content %>
+                    &ensp;
+                    <%=post.user.name %>
+                      <% if(locals.user && locals.user.id==post.user.id) { %>
+                        <small>
+                          <a href="/posts/destroy/<%=post.id %> " , method="GET">&ensp;Delete</a>
+                        </small>
+                        <% } %>
+                </p>
+                <div class="post-comments">
+                  <% if(locals.user) { %>
+                    <form action="/comments/create" method="POST">
+                      <input type="text" name="content" placeholder="Type here to add comment.." required />
+                      <input type="hidden" name="post" value="<%=post._id %>" />
+                      <input type="submit" value="Add Comment" />
+                    </form>
+                    <% } %>
+                      <div class="post-comment-list">
+                        <ul id="post-comment-<%=post._id %>" style="list-style-type: none;" >
+                          <% for(let cmt of post.comment) { %>
+
+                            <li>
+                              <p>
+                                <%=cmt.content %>
+                                  <br>
+                                  <small>
+                                    <%=cmt.user.name %>
+                                  </small>
+                                  <% if(locals.user && (locals.user.id==post.user.id || locals.user.id==cmt.user.id )) {
+                                    %>
+                                    <small>
+                                      <a href="/comments/destroy/<%=cmt.id %>" ,method="GET">Delete</a>
+                                    </small>
+                                    <%} %>
+                              </p>
+                            </li>
+
+                            <% } %>
+                        </ul>
+                      </div>
+                </div>
+              </li>
+
+              <% } %>
+          </ul>
+        </div>
+
+  </section>
+
+  <section id="user-friends">
+
+    <h4>Friends</h4>
+    <% for(let u of all_users) { %>
+      <p>
+        <a href="/users/profile/<%=u.id %>">
+          <%=u.name%>
+        </a>
+      </p>
+      <% } %>
+
+  </section>
+
+</div>
