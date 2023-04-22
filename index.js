@@ -1,11 +1,17 @@
 const express = require('express');
 const port = 8000;
 const app = express();
+const cookieParser = require('cookie-parser');
 const expressLayouts = require('express-ejs-layouts');
+const db = require('./config/mongoose');
 
 //using layout of the webside.
 app.use(expressLayouts);
 app.use(express.static('./assets'));
+
+//using urlencoded and cookie-parser
+app.use(express.urlencoded({extended:true}));
+app.use(cookieParser());
 
 //redirecting request comming in to index.js in routes.
 app.use('/',require('./routes/index'));
