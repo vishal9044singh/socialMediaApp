@@ -12,6 +12,9 @@ module.exports.profile = function (req, res) {
 //rendering signUp page
 module.exports.signUp = function (req, res) {
     console.log('We are in usersController in signUp');
+    if(req.isAuthenticated()){
+        return res.redirect('/users/profile');
+    }
     return res.render('users_signUp', {
         title: "SignUp Page",
         content: "Hey! You are in signUp Page"
@@ -20,10 +23,14 @@ module.exports.signUp = function (req, res) {
 
 //rendering signIn page
 module.exports.signIn = function (req, res) {
-    console.log('We are in usersController in signIn');
+    console.log('We are in usersController in signIn req is');
+    if(req.isAuthenticated()){
+        return res.redirect('/users/profile');
+    }
+    // if(req.isAuthenticated())
     return res.render('users_signIn', {
         title: "SignIn Page",
-        content: "Hey! You are in signIn Page"
+        content: "Hey! You are on signIn Page"
     });
 }
 
@@ -51,5 +58,5 @@ module.exports.create = async function (req, res) {
 
 //signIn and create a user session
 module.exports.createSession = function (req, res) {
-    //todo later
+    return res.redirect('/users/profile');
 }
