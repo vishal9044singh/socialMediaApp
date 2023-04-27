@@ -1,8 +1,7 @@
 const User = require('../models/users');
 
 module.exports.profile = function (req, res) {
-    console.log('Step3: UsersController.js has loaded!')
-    // return res.end('<h1>You have rendered Users Controller!!</h1>');
+    console.log('Step3: UsersController.js has loaded!');
     return res.render('profile', {
         title: "My Profile Page",
         content: "Hey You have landed on profile Page!"
@@ -12,7 +11,7 @@ module.exports.profile = function (req, res) {
 //rendering signUp page
 module.exports.signUp = function (req, res) {
     console.log('We are in usersController in signUp');
-    if(req.isAuthenticated()){
+    if(!!req.isAuthenticated()){
         return res.redirect('/users/profile');
     }
     return res.render('users_signUp', {
@@ -24,8 +23,8 @@ module.exports.signUp = function (req, res) {
 //rendering signIn page
 module.exports.signIn = function (req, res) {
     console.log('We are in usersController in signIn req is');
-    if(req.isAuthenticated()){
-        return res.redirect('/users/profile');
+    if(!!req.isAuthenticated()){
+        return res.redirect('/');
     }
     // if(req.isAuthenticated())
     return res.render('users_signIn', {
@@ -43,6 +42,7 @@ module.exports.create = async function (req, res) {
     let user = await User.findOne({ email: req.body.email });
     if (!user) {
         let createdUser = await User.create(req.body);
+        res.locals.user=createdUser;
         if (!createdUser) {
             console.log('got error in creating user while signing Up!');
             return;
@@ -58,5 +58,18 @@ module.exports.create = async function (req, res) {
 
 //signIn and create a user session
 module.exports.createSession = function (req, res) {
-    return res.redirect('/users/profile');
+    return res.redirect('/');
+}
+
+//doing signOut that is destroying session
+module.exports.destroySession = function(req,res,next){
+    console.log('in usersController in destroySession');
+    //Todo later
+    req.logout(function(err){
+        if(err){
+            console.log('got error in logging out the user!')
+            return res.redirect('back');
+        }
+        return res.redirect('/');
+    });
 }

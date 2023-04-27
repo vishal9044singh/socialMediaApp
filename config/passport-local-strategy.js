@@ -57,7 +57,7 @@ passport.checkAuthenticationAtSignIN = function (req, res, next){
 passport.setAuthenticatedUser = function(req, res, next){
     if(req.isAuthenticated()){
         //here req.user contains the current signed in user, which we are assigning to res.locals for redirecting to the same profile page, unit session is not expired.
-        res.local.user = req.user;
+        res.locals.user = req.user;
     }
     next();
 }
