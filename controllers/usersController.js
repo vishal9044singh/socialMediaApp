@@ -1,4 +1,5 @@
 const User = require('../models/users');
+const Post = require('../models/posts');
 
 module.exports.profile = function (req, res) {
     console.log('Step3: UsersController.js has loaded!');
