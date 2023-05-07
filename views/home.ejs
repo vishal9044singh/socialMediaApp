@@ -15,52 +15,50 @@
           <ul style="list-style-type: none;">
             <% for(let post of posts) { %>
 
-              <li>
-                <p>
-                  <%=post.content %>
-                    &ensp;
-                    <%=post.user.name %>
-                      <% if(locals.user && locals.user.id==post.user.id) { %>
-                        <small>
-                          <a href="/posts/destroy/<%=post.id %> " , method="GET">&ensp;Delete</a>
-                        </small>
-                        <% } %>
-                </p>
-                <div class="post-comments">
-                  <% if(locals.user) { %>
-                    <form action="/comments/create" method="POST">
-                      <input type="text" name="content" placeholder="Type here to add comment.." required />
-                      <input type="hidden" name="post" value="<%=post._id %>" />
-                      <input type="submit" value="Add Comment" />
-                    </form>
-                    <% } %>
-                      <div class="post-comment-list">
-                        <ul id="post-comment-<%=post._id %>" style="list-style-type: none;" >
-                          <% for(let cmt of post.comment) { %>
-
-                            <li>
-                              <p>
-                                <%=cmt.content %>
-                                  <br>
-                                  <small>
-                                    <%=cmt.user.name %>
-                                  </small>
-                                  <% if(locals.user && (locals.user.id==post.user.id || locals.user.id==cmt.user.id )) {
-                                    %>
-                                    <small>
-                                      <a href="/comments/destroy/<%=cmt.id %>" ,method="GET">Delete</a>
-                                    </small>
-                                    <%} %>
-                              </p>
-                            </li>
-
-                            <% } %>
-                        </ul>
-                      </div>
-                </div>
-              </li>
-
+          <li id="post-<%=post._id %>">
+            <p>
+              <%=post.content %> &ensp;
+              <%=post.user.name %>
+              <% if(locals.user && locals.user.id==post.user.id) { %>
+              <small>
+                <a class="delete-post-button" href="/posts/destroy/<%=post.id %> ", method="GET">&ensp;Delete</a>
+              </small>
               <% } %>
+            </p>
+            <div class="post-comments">
+              <% if(locals.user) { %>
+              <form action="/comments/create" method="POST">
+                <input type="text" name="content" placeholder="Type here to add comment.." required />
+                <input type="hidden" name="post" value="<%=post._id %>" />
+                <input type="submit" value="Add Comment" />
+              </form>
+                <% } %>
+                  <div class="post-comment-list">
+                    <ul id="post-comment-<%=post._id %>" style="list-style-type: none;">
+                      <% for(let cmt of post.comment) { %>
+
+                      <li>
+                        <p>
+                      <%=cmt.content %>
+                        <br>
+                        <small>
+                          <%=cmt.user.name %>
+                        </small>
+                        <% if(locals.user && (locals.user.id==post.user.id || locals.user.id==cmt.user.id )) {%>
+                        <small>
+                          <a href="/comments/destroy/<%=cmt.id %>" ,method="GET">Delete</a>
+                        </small>
+                        <%} %>
+                        </p>
+                      </li>
+
+                        <% } %>
+                    </ul>
+                  </div>
+            </div>
+          </li>
+
+            <% } %>
           </ul>
         </div>
 
@@ -78,5 +76,5 @@
       <% } %>
 
   </section>
-
+  <script src="/js/home_posts.js"></script>
 </div>

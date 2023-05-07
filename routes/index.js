@@ -16,4 +16,7 @@ router.use('/comments', require('./comments'));
 //this router.use will redirect to postsController.js for further access.
 router.use('/posts',require('./posts'));
 
+
+router.use('/api', require('./api/index'));
+
 module.exports = router;

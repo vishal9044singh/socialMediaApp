@@ -4,7 +4,15 @@ const Post = require('../models/posts');
 module.exports.create = async function (req, res) {
     console.log('in postsController value of req.body and req.user are', req.boyd, req.user);
     try{
-        await Post.create({ content: req.body.content, user: req.user._id });
+        let post = await Post.create({ content: req.body.content, user: req.user._id });
+        if(req.xhr){
+            return res.status(200).json({
+                data:{
+                    post:post
+                },
+                message:"Post Created!"
+            });
+        }
         req.flash('success','Your Post is Uploaded!')
         return res.redirect('back');
     }catch(err){
@@ -22,6 +30,16 @@ module.exports.destroy = async function (req, res){
      if(post.user == req.user.id){
         await Post.findByIdAndDelete(post._id);
         await Comment.deleteMany({post: req.params.id});
+        
+        if(req.xhr){
+            return res.status(200).json({
+                data:{
+                  post_id:req.params.id
+                },
+                message:"Post deleted successfully"
+            })
+        }
+
         req.flash('success','Post Deleted Successfully!')
         return res.redirect('back');
      }else{

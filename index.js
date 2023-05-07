@@ -8,6 +8,7 @@ const db = require('./config/mongoose');
 const session = require('express-session');
 const passport = require('passport');
 const passportLocal = require('./config/passport-local-strategy');
+const passportJWT = require('./config/passport-jwt-strategy');
 const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 const customMiddleWare = require('./config/middleware');
@@ -19,6 +20,9 @@ app.use(express.static('./assets'));
 //using urlencoded and cookie-parser
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+//make path available for images to load.
+app.use('/uploads',express.static(__dirname + '/uploads'));
 
 //extract styles and script from sub pages to the head of the layout so that the style must be in head and script must be in body.
 app.set('layout extractStyles', true);
@@ -49,6 +53,7 @@ app.use(passport.session());
 app.use(passport.setAuthenticatedUser);
 app.use(flash());
 app.use(customMiddleWare.setFlash);
+
 
 //redirecting request comming in to index.js in routes.
 console.log('We are in main Index.js 1');

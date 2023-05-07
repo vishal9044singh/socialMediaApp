@@ -1,8 +1,10 @@
 const User = require('../models/users');
 const Post = require('../models/posts');
+const fs = require('fs');
+const path = require('path');
 
 module.exports.profile = async function (req, res) {
-    console.log('Step3: UsersController.js has loaded!',req.params);
+    console.log('Step3: UsersController.js has loaded!', req.params);
     try {
         let user = await User.findById(req.params.id);
         return res.render('profile', {
@@ -10,9 +12,9 @@ module.exports.profile = async function (req, res) {
             content: "Hey You have landed on profile Page!",
             profile_user: user
         });
-    }catch (err) {
-       console.log("got Error in loading profile of user!",err);
-       return res.redirect('back');
+    } catch (err) {
+        console.log("got Error in loading profile of user!", err);
+        return res.redirect('back');
     }
 }
 
@@ -66,8 +68,8 @@ module.exports.create = async function (req, res) {
 
 //signIn and create a user session
 module.exports.createSession = function (req, res) {
-    req.flash('success','Logged in Successfully!');
-    
+    req.flash('success', 'Logged in Successfully!');
+
     return res.redirect('/');
 }
 
@@ -80,23 +82,45 @@ module.exports.destroySession = function (req, res, next) {
             console.log('got error in logging out the user!')
             return res.redirect('back');
         }
-        req.flash('success','Logged Out Successfully!')
+        req.flash('success', 'Logged Out Successfully!')
         return res.redirect('/');
     });
 }
 
-module.exports.update = async function(req,res){
-    console.log('in usersController in update',req.body, req.params, req.user);
-    try{
-        if(req.user.id == req.params.id){
-            await User.findByIdAndUpdate(req.user.id, req.body);
-            console.log('Profile successfully Updated!');
+module.exports.update = async function (req, res) {
+    if (req.user.id == req.params.id) {
+        try {
+            let user = await User.findByIdAndUpdate(req.user.id, req.body);
+            User.uploadedAvatar(req, res, function (err) {
+                console.log('in uploadedAvatar>>>>>>>>>');
+                if (err) {
+                    console.log('*****multer error:', err)
+                    return res.redirect('back');
+                } else {
+                    user.name = req.body.name;
+                    user.email = req.body.email;
+                    if (req.file) {
+                        if (!!user.avatar) {
+                            fs.unlink(path.join(__dirname, '..', user.avatar), function (err) {
+                                //this is saving the avatar path in the avatar variable in user.
+                                user.avatar = User.avatarPath + '/' + req.file.filename;
+                                user.save();
+                                console.log('Profile successfully Updated!');
+                                return res.redirect('back');
+                            });
+                        }
+                    }
+                }
+            })
+        } catch (err) {
+            console.log('got error in update', err);
+            req.flash('error', err);
             return res.redirect('back');
-          }else{
-             return res.status(401).send("Unautherized");
-          }
-    }catch(err){
-        console.log('Got Error in Updating User',err);
-        return res.redirect('back');
+        }
+
+    } else {
+        console.log('in else condition in update');
+        req.flash('error', 'Unauthorized!');
+        return res.status(401).send("Unautherized");
     }
 }
